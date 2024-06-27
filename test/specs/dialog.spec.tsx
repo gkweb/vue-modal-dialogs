@@ -1,19 +1,18 @@
-'use strict'
-
-import * as sinon from 'sinon'
+import {vi, expect, describe, afterEach, beforeEach, it, beforeAll} from 'vitest'
+import { defineComponent } from 'vue'
 import * as VueTest from '@vue/test-utils'
 import { wrappers } from 'vue-modal-dialogs/wrapper'
-import TestComponent from '../components/test.vue'
-import { create, DialogsWrapper } from 'vue-modal-dialogs'      // eslint-disable-line no-unused-vars
+import TestComponent from './../components/test.vue'
+import { create, DialogsWrapper } from 'vue-modal-dialogs' // eslint-disable-line no-unused-vars
 
-const noop = () => { /* nothing */ }
+const noop = (...unknown) => { /* nothing */ }
 let wrapper
 const symbol = {}   // Fake symbol
 const testFunction = create(TestComponent, 'title', 'content')
 
 function nextTick () {
   // Wait 20ms to ensure the component promise is resolved
-  return new Promise(resolve => setTimeout(resolve, 20))
+  return new Promise(resolve => setTimeout(resolve, 20, true))
 }
 
 function getDialogComponentVm (index = 0, wrapperIndex = 0) {
@@ -22,12 +21,12 @@ function getDialogComponentVm (index = 0, wrapperIndex = 0) {
 
 function generatePromiseTest (dialogFunction) {
   return async function promiseTest (action = noop, data = symbol, awaitTransition = false) {
-    let dialog = dialogFunction(data)
-    const rejectSpy = sinon.spy()
-    const resolveSpy = sinon.spy()
+    let dialog = await dialogFunction(data)
+    const rejectSpy = vi.fn()
+    const resolveSpy = vi.fn()
 
     await nextTick()
-    await action(dialog, resolveSpy, rejectSpy)
+    action(dialog, resolveSpy, rejectSpy)
 
     if (awaitTransition) {
       dialog = dialog.transition()
@@ -38,21 +37,25 @@ function generatePromiseTest (dialogFunction) {
   }
 }
 
+export const wrapperComponent = defineComponent({
+  render () {
+    return (
+        <div>
+          <DialogsWrapper />
+          <DialogsWrapper name="another" />
+        </div>
+    )
+  }
+})
+
 function registerCommonHooks () {
-  beforeEach('create two wrappers', () => {
-    wrapper = VueTest.mount({
-      render (h) {
-        return (
-          <div>
-            <DialogsWrapper />
-            <DialogsWrapper name="another" />
-          </div>
-        )
-      }
-    })
+  // 'create two wrappers',
+  beforeEach(() => {
+    wrapper = VueTest.mount(wrapperComponent)
   })
 
-  afterEach('clear the internal states', () => {
+  // 'clear the internal states',
+  afterEach(() => {
     wrapper.destroy()
     Object.keys(wrappers).forEach(key => delete wrappers[key])
   })
@@ -118,7 +121,7 @@ describe('Dialog function', () => {
       }))
 
       const { rejectSpy } = await promiseTest()
-      expect(rejectSpy).to.have.been.called
+      expect(rejectSpy).toHaveBeenCalled()
     })
   })
 })
@@ -143,35 +146,42 @@ describe('Dialog component', () => {
   it('should reject the dialog promise romise when $error is called', async () => {
     const close = () => wrapper.find('#reject').trigger('click')
     const { rejectSpy } = await promiseTest(close)
-    expect(rejectSpy).to.have.been.calledWith(symbol)
+    // expect(rejectSpy).to.have.been.calledWith(symbol)
+    expect(rejectSpy).toHaveBeenCalledWith(symbol)
   })
 })
 
 describe('Dialog Promise', () => {
-  registerCommonHooks()
-  const promiseTest = generatePromiseTest(testFunction)
+  let promiseTest
+
+  beforeAll(() => {
+    registerCommonHooks()
+    promiseTest = generatePromiseTest(testFunction)
+  })
 
   it('should be returned by dialog function', () => {
     const dialog = testFunction()
-    expect(dialog).to.be.a('promise')
+    // expect(dialog).to.be.a('promise')
+    expect(dialog).toBeInstanceOf(Promise)
   })
 
   describe('close', () => {
     it('should resolve the promise', async () => {
       const { resolveSpy } = await promiseTest(dialog => dialog.close(symbol))
-      expect(resolveSpy).to.have.been.calledWith(symbol)
+      expect(resolveSpy).toHaveBeenCalledWith(symbol)
     })
 
     it('should return undefined', () => {
       const dialog = testFunction()
-      expect(dialog.close()).to.be.an('undefined')
+      // expect(dialog.close()).to.be.an('undefined')
+      expect(dialog.close()).toBeUndefined()
     })
   })
 
   describe('error', () => {
     it('should reject the promise', async () => {
       const { rejectSpy } = await promiseTest(dialog => dialog.error(symbol))
-      expect(rejectSpy).to.have.been.calledWith(symbol)
+      expect(rejectSpy).toHaveBeenCalledWith(symbol)
     })
 
     it('should return undefined', () => {
@@ -191,27 +201,38 @@ describe('Dialog Promise', () => {
     })
   })
 
-  describe('transition', () => {
-    function transitionTest (action) {
+    function transitionTest (action: any) {
       return promiseTest(async (dialog, resolveSpy, rejectSpy) => {
         action(dialog)
         await nextTick()
 
         // Transition takes 100ms, but nextTick takes 20ms.
         // At this time, all spies should not be called
-        expect(resolveSpy).not.to.have.been.called
-        expect(rejectSpy).not.to.have.been.called
+        // expect(resolveSpy).not.to.have.been.called
+        expect(resolveSpy).not.toHaveBeenCalled()
+        expect(rejectSpy).not.toHaveBeenCalled()
       }, symbol, true /* awaitTransition */)
     }
 
+  describe('transition', () => {
     it('should return a promise resolves with the same data after the transition ends', async () => {
-      const { resolveSpy } = await transitionTest(dialog => dialog.close(symbol))
-      expect(resolveSpy).to.have.been.calledWith(symbol)
+      const { resolveSpy } = await transitionTest(async (dialog) => {
+        console.log(dialog)
+
+        await dialog
+        console.log(dialog)
+
+
+        return dialog.close(symbol)
+      })
+
+
+      expect(resolveSpy).toHaveBeenCalledWith(symbol)
     })
 
     it('should return a promise rejects with the same error after the transition ends', async () => {
       const { rejectSpy } = await transitionTest(dialog => dialog.error(symbol))
-      expect(rejectSpy).to.have.been.calledWith(symbol)
+      expect(rejectSpy).toHaveBeenCalledWith(symbol)
     })
   })
 })

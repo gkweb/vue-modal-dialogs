@@ -1,6 +1,5 @@
-'use strict'
-
 import { wrappers } from './wrapper'
+
 import {
   noop,
   CLOSE_EVENT,
@@ -61,6 +60,7 @@ export function create (options, ...props) {
   }
 
   const dialogData = generateDialogData(props, component)
+
   return function dialogFunction (...args) {
     if (wrappers[wrapper]) {
       // Add dialog component into dialogsWrapper component

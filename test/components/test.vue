@@ -2,10 +2,22 @@
   <div class="test">
     <span class="title">{{ title }}</span>
     <span class="content">{{ content }}</span>
-    <button id="resolve" @click="$close(title)"></button>
-    <button id="reject" @click="$error(title)"></button>
+    <button
+      id="resolve"
+      @click="$close(title)"
+    />
+    <button
+      id="reject"
+      @click="$error(title)"
+    />
   </div>
 </template>
+
+<script lang="ts">
+import {defineComponent} from 'vue'
+
+export default defineComponent({name: 'DialogSpec'})
+</script>
 
 <style>
   .fade-enter-active, .fade-leave-active {

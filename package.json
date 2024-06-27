@@ -1,21 +1,46 @@
 {
   "name": "vue-modal-dialogs",
-  "version": "3.0.0",
+  "version": "0.0.1",
   "description": "Promisify dialogs in Vue.js",
-  "main": "dist/vue-modal-dialogs.cjs.js",
+  "main": "dist/vue-modal-dialogs.esm.js",
   "module": "dist/vue-modal-dialogs.esm.js",
   "typings": "vue-modal-dialogs.d.ts",
+  "type": "module",
   "files": [
     "dist",
     "src",
     "vue-modal-dialogs.d.ts"
   ],
+  "exports": {
+    ".": {
+      "development": "./src/index.ts",
+      "production": "./src/index.ts",
+      "import": "./dist/index.js"
+    },
+    "./create": {
+      "development": "./src/create.ts",
+      "production": "./src/create.ts",
+      "import": "./dist/create.js"
+    },
+    "./utils": {
+      "development": "./src/utils.ts",
+      "production": "./src/utils.ts",
+      "import": "./dist/utils.js"
+    },
+    "./wrapper": {
+      "development": "./src/wrapper.ts",
+      "production": "./src/wrapper.ts",
+      "import": "./dist/wrapper.js"
+    }
+  },
   "scripts": {
-    "build": "npm run lint && npm run build:cjs && npm run build:esm",
-    "build:cjs": "NODE_ENV=production rollup -c build/cjs.js",
-    "build:esm": "NODE_ENV=production rollup -c build/esm.js",
-    "lint": "eslint src test",
+    "build": "yarn run vite build",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "tsc:compile": "yarn tsc --build --incremental",
+    "tsc:watch": "yarn tsc:compile --watch",
     "test": "NODE_ENV=test BABEL_ENV=test karma start test/karma.conf.js --single-run",
+    "test:unit": "yarn vitest test/",
     "test:debug": "NODE_ENV=test BABEL_ENV=test DEBUG=1 karma start test/karma.conf.js --single-run=false --debug"
   },
   "repository": {
@@ -37,25 +62,24 @@
   },
   "homepage": "https://github.com/hjkcai/vue-modal-dialogs#readme",
   "devDependencies": {
-    "@vue/test-utils": "^1.0.0-beta.13",
+    "@babel/core": "7.24.7",
+    "@babel/plugin-proposal-decorators": "7.24.7",
+    "@babel/plugin-syntax-decorators": "^7.24.7",
+    "@babel/preset-env": "7.24.7",
+    "@eslint/js": "9.5.0",
+    "@types/babel__core": "^7",
+    "@types/babel__preset-env": "^7",
+    "@types/node": "20.14.7",
+    "@typescript-eslint/eslint-plugin": "5.40.0",
+    "@typescript-eslint/parser": "5.40.0",
+    "@vitejs/plugin-vue2": "2.3.1",
+    "@vitejs/plugin-vue2-jsx": "1.1.1",
+    "@vue/test-utils": "1.3.6",
     "autoprefixer": "^6.6.0",
-    "babel-core": "^6.21.0",
-    "babel-eslint": "^7.1.1",
-    "babel-helper-vue-jsx-merge-props": "^2.0.2",
-    "babel-loader": "^7.1.2",
-    "babel-plugin-syntax-jsx": "^6.18.0",
-    "babel-plugin-transform-runtime": "^6.15.0",
-    "babel-plugin-transform-vue-jsx": "^3.5.0",
-    "babel-preset-env": "^1.6.0",
-    "babel-preset-stage-2": "^6.18.0",
     "chai": "^4.1.2",
-    "css-loader": "^0.26.1",
-    "eslint": "^3.12.2",
-    "eslint-config-standard": "^6.2.1",
-    "eslint-loader": "^1.6.1",
-    "eslint-plugin-html": "^1.7.0",
-    "eslint-plugin-promise": "^3.4.0",
-    "eslint-plugin-standard": "^2.0.1",
+    "eslint": "9.5.0",
+    "eslint-plugin-vue": "9.26.0",
+    "jsdom": "24.1.0",
     "karma": "^2.0.0",
     "karma-chrome-launcher": "^2.2.0",
     "karma-mocha": "^1.3.0",
@@ -65,19 +89,15 @@
     "karma-webpack": "^3.0.0",
     "mocha": "^4.0.1",
     "puppeteer": "^0.12.0",
-    "rollup": "^0.57.1",
-    "rollup-plugin-buble": "^0.19.2",
     "sinon": "^4.0.2",
     "sinon-chai": "^2.14.0",
-    "style-loader": "^0.13.1",
-    "ts-loader": "^3.2.0",
-    "typescript": "^2.8.1",
-    "uglify-js": "^3.1.0",
-    "vue": "^2.5.16",
-    "vue-loader": "^14.2.2",
+    "typescript": "4.9.5",
+    "vite": "4.3.3",
+    "vite-plugin-babel": "^1.2.0",
+    "vitest": "1.6.0",
+    "vue": "^2.7.14",
     "vue-property-decorator": "^6.0.0",
-    "vue-style-loader": "^3.0.3",
-    "vue-template-compiler": "^2.5.16",
-    "webpack": "^3.6.0"
-  }
+    "vue-template-compiler": "^2.7.14"
+  },
+  "packageManager": "yarn@4.3.1"
 }

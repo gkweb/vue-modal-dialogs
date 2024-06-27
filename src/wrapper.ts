@@ -1,5 +1,4 @@
-'use strict'
-
+import { defineComponent } from 'vue'
 import {
   noop,
   CLOSE_EVENT,
@@ -12,7 +11,7 @@ import {
 export const wrappers = {}
 
 /** DialogsWrapper component */
-export default {
+export default defineComponent({
   name: 'DialogsWrapper',
   props: {
     name: {
@@ -102,7 +101,7 @@ export default {
 
       // It will be resolves after the dialog's leave transition ends
       const transitionPromise = instancePromise
-        .then(component => new Promise(res => { component.$el.$afterLeave = res }))
+        .then((component: Vue) => new Promise(res => { component.$el.$afterLeave = res }))
         .then(() => dataPromise)
 
       const finalPromise = dialogData.component.then(component => {
@@ -133,4 +132,4 @@ export default {
       this.$delete(this.dialogs, id)
     }
   }
-}
+})

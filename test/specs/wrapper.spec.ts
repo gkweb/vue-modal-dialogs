@@ -1,7 +1,7 @@
 'use strict'
 
-import * as sinon from 'sinon'
-import * as VueTest from '@vue/test-utils'
+import { vi, expect, describe, beforeEach, it } from 'vitest'
+import { mount } from '@vue/test-utils'
 import { wrappers } from 'vue-modal-dialogs/wrapper'
 import TestComponent from '../components/test.vue'
 import { create, DialogsWrapper } from 'vue-modal-dialogs'
@@ -11,18 +11,19 @@ function delay (ms) {
 }
 
 describe('Dialogs wrapper', () => {
-  beforeEach('clear the internal states', () => {
+  // 'clear the internal states',
+  beforeEach(() => {
     Object.keys(wrappers).forEach(key => delete wrappers[key])
   })
 
   describe('the wrapper record', () => {
     it('should have the key `default`', () => {
-      const { vm } = VueTest.mount(DialogsWrapper)
+      const { vm } = mount(DialogsWrapper)
       expect(wrappers.default).to.equal(vm)
     })
 
     it('should have the key same to the name of the wrapper', () => {
-      const { vm } = VueTest.mount(DialogsWrapper, {
+      const { vm } = mount(DialogsWrapper, {
         propsData: { name: 'test' }
       })
 
@@ -30,20 +31,20 @@ describe('Dialogs wrapper', () => {
     })
 
     it('should override the existing key', async () => {
-      const vmTest = VueTest.mount(DialogsWrapper, {
+      const vmTest = mount(DialogsWrapper, {
         propsData: { name: 'test' }
       }).vm
       expect(wrappers.test).to.equal(vmTest)
 
       // add again
-      const vmTest1 = VueTest.mount(DialogsWrapper, {
+      const vmTest1 = mount(DialogsWrapper, {
         propsData: { name: 'test' }
       }).vm
       expect(wrappers.test).to.equal(vmTest1)
     })
 
     it('should remove the key when the wrapper is destroyed', () => {
-      VueTest.mount(DialogsWrapper, {
+      mount(DialogsWrapper, {
         propsData: { name: 'test' }
       }).destroy()
 
@@ -73,7 +74,7 @@ describe('Dialogs wrapper', () => {
         type: 'type'
       }
 
-      const { vm } = VueTest.mount(DialogsWrapper, {
+      const { vm} = mount(DialogsWrapper, {
         propsData,
         stubs: {
           'transition-group': false
@@ -87,8 +88,9 @@ describe('Dialogs wrapper', () => {
     })
 
     it('should receive the events of <transition-group> component', async () => {
-      const spy = sinon.spy()
-      VueTest.mount(DialogsWrapper, {
+      const spy = vi.fn()
+
+      mount(DialogsWrapper, {
         attrs: { css: false },
         propsData: { transitionName: 'fade' },
         listeners: {
@@ -111,7 +113,7 @@ describe('Dialogs wrapper', () => {
       await promise.close()
       await delay(100)
 
-      expect(spy).to.have.callCount(6)
+      expect(spy).to.have.toBeCalledTimes(6)
     })
   })
 })

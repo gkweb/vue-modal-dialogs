@@ -1,11 +1,9 @@
-'use strict'
-
 export function noop () { /* nothing */ }
 
-export const CLOSE_EVENT = 'vue-modal-dialogs:close'
-export const ERROR_EVENT = 'vue-modal-dialogs:error'
+export const CLOSE_EVENT = 'vue-modal-dialogs:close' as const
+export const ERROR_EVENT = 'vue-modal-dialogs:error' as const
 
-export const transitionGroupProps = {
+export const transitionGroupProps: Record<string, String | Boolean | Number | Object> = {
   tag: String,
   appear: Boolean,
   css: Boolean,

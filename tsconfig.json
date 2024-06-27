@@ -7,10 +7,18 @@
     "sourceMap": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
+    "strict": true,
     "jsx": "preserve",
+    "types": [
+      "node",
+      "vite/client",
+    ],
     "baseUrl": ".",
     "paths": {
       "vue-modal-dialogs": ["vue-modal-dialogs.d.ts"]
-    }
-  }
+    },
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
 }

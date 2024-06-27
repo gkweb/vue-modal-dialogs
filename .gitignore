@@ -3,6 +3,13 @@ logs
 *.log
 npm-debug.log*
 
+# vite
+.log*
+vitest.config.ts.timestamp*
+
+# ts
+tsconfig.tsbuildinfo
+
 # Runtime data
 pids
 *.pid

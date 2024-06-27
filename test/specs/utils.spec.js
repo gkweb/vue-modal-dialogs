@@ -1,4 +1,4 @@
-'use strict'
+import { vi, expect, describe, it } from 'vitest'
 
 import Vue from 'vue'
 import * as utils from 'vue-modal-dialogs/utils'

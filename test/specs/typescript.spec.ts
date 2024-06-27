@@ -1,3 +1,4 @@
+import { it, describe } from 'vitest'
 import Vue from 'vue'
 import TestTsx from '../components/test-tsx'
 import * as ModalDialogs from 'vue-modal-dialogs'
